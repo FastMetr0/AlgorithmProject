@@ -7,7 +7,19 @@ const ctx = canvas.getContext("2d");
 const NODE_RADIUS = 40;
 
 // =======================
-// DYNAMIC GRAPH DATA
+const nodeMap = {
+  0: "Cairo",
+  1: "Gaza",
+  2: "Damascus",
+  3: "Homs",
+  4: "Aleppo",
+  5: "Aleppo" 
+};
+
+
+function mapPath(path) {
+  return path.map(id => nodeMap[id]);
+}
 // =======================
 let nodes = [
   { id: "Cairo", x: 100, y: 100 },
@@ -245,6 +257,26 @@ function runSSP(numPaths) {
 
   animateNext();
 }
+
+
+fetch("output.json")
+  .then(res => res.json())
+  .then(data => {
+    console.log("Loaded JSON:", data);
+
+    // DIJKSTRA
+    window.shortestPath = mapPath(data.dijkstra.path);
+    runShortestPath(data.dijkstra.cost);
+
+    // DINIC
+    window.capacityPaths = data.dinic.paths.map(mapPath);
+    runCapacity(data.dinic.max_flow);
+
+    // MCMF
+    window.sspPaths = data.mcmf.paths.map(p => mapPath(p.nodes));
+    runSSP(window.sspPaths.length);
+  })
+  .catch(err => console.error("JSON load error:", err));
 
 // =======================
 // INITIAL DRAW
