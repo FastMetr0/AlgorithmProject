@@ -263,7 +263,7 @@ fetch("output.json")
   .then(res => res.json())
   .then(data => {
     console.log("Loaded JSON:", data);
-
+    .catch(err => console.error("JSON load error:", err));
     // DIJKSTRA
     window.shortestPath = mapPath(data.dijkstra.path);
     runShortestPath(data.dijkstra.cost);
@@ -277,6 +277,9 @@ fetch("output.json")
     runSSP(window.sspPaths.length);
   })
   .catch(err => console.error("JSON load error:", err));
+
+
+
 
 // =======================
 // INITIAL DRAW
